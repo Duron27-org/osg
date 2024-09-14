@@ -793,6 +793,8 @@ std::string Registry::createLibraryNameForExtension(const std::string& ext)
     return prepend+"osgdb_"+lowercase_ext+OSG_LIBRARY_POSTFIX_WITH_QUOTES+".dll";
 #elif macintosh
     return prepend+"osgdb_"+lowercase_ext+OSG_LIBRARY_POSTFIX_WITH_QUOTES;
+#elif defined(__ANDROID__)
+    return preprend+"lib"+"osgdb_"+lowercase_ext+OSG_LIBRARY_POSTFIX_WITH_QUOTES+ADDQUOTES(OSG_PLUGIN_EXTENSION);
 #else
     return prepend+"osgdb_"+lowercase_ext+OSG_LIBRARY_POSTFIX_WITH_QUOTES+ADDQUOTES(OSG_PLUGIN_EXTENSION);
 #endif
@@ -809,8 +811,6 @@ std::string Registry::createLibraryNameForNodeKit(const std::string& name)
     return name+OSG_LIBRARY_POSTFIX_WITH_QUOTES+".dll";
 #elif macintosh
     return name+OSG_LIBRARY_POSTFIX_WITH_QUOTES;
-#elif defined(__ANDROID__)
-    return preprend+"lib"+"osgdb_"+lowercase_ext+OSG_LIBRARY_POSTFIX_WITH_QUOTES+ADDQUOTES(OSG_PLUGIN_EXTENSION);
 #else
     return "lib"+name+OSG_LIBRARY_POSTFIX_WITH_QUOTES + ADDQUOTES(OSG_PLUGIN_EXTENSION);
 #endif
