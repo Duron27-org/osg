@@ -301,6 +301,12 @@ MACRO(SETUP_PLUGIN PLUGIN_NAME)
         ADD_LIBRARY(${TARGET_TARGETNAME} STATIC ${TARGET_SRC} ${TARGET_H})
     ENDIF(DYNAMIC_OPENSCENEGRAPH)
 
+    # XXX: remove the "lib" prefix e.g. "libosgdb_bmp.a" => "osgdb_bmp.a"
+    # without this you'll just get an almost black screen
+    if(ANDROID)
+        SET_TARGET_PROPERTIES(${TARGET_TARGETNAME} PROPERTIES PREFIX "")
+    endif()
+
     IF(MSVC)
         IF(NOT CMAKE24)
             SET_OUTPUT_DIR_PROPERTY_260(${TARGET_TARGETNAME} "${OSG_PLUGINS}")        # Sets the ouput to be /osgPlugin-X.X.X ; also ensures the /Debug /Release are removed
