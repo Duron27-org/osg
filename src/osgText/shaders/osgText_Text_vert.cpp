@@ -1,5 +1,4 @@
-char osgText_Text_vert[] = "$OSG_GLSL_VERSION\n"
-                           "$OSG_PRECISION_FLOAT\n"
+char osgText_Text_vert[] = "#version 120\n"
                            "\n"
                            "$OSG_VARYING_OUT vec2 texCoord;\n"
                            "$OSG_VARYING_OUT vec4 vertexColor;\n"

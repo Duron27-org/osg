@@ -162,7 +162,7 @@ InternalPixelRelations sizedInternalFormats[] = {
     , { GL_RGB5_A1                             , GL_RGBA             , GL_UNSIGNED_SHORT_1_5_5_5_REV                }
     , { GL_RGB5_A1                             , GL_RGBA             , GL_UNSIGNED_INT_10_10_10_2                   }
     , { GL_RGB5_A1                             , GL_RGBA             , GL_UNSIGNED_INT_2_10_10_10_REV               }
-    , { GL_RGBA16F                             , GL_RGBA             , GL_HALF_FLOAT                                }
+ // , { GL_RGBA16F                             , GL_RGBA             , GL_HALF_FLOAT                                }
     , { GL_RGBA16F_ARB                         , GL_RGBA             , GL_FLOAT                                     }
     , { GL_RGBA32F_ARB                         , GL_RGBA             , GL_FLOAT                                     }
 
@@ -2157,11 +2157,11 @@ void Texture::applyTexParameters(GLenum target, State& state) const
             wr = CLAMP;
     }
 
-//    #if defined(OSG_GLES1_AVAILABLE) || defined(OSG_GLES2_AVAILABLE) || defined(OSG_GLES3_AVAILABLE) || defined(OSG_GL3_AVAILABLE)
+    #if defined(OSG_GLES1_AVAILABLE) || defined(OSG_GLES2_AVAILABLE) || defined(OSG_GLES3_AVAILABLE) || defined(OSG_GL3_AVAILABLE)
         if (ws == CLAMP) ws = CLAMP_TO_EDGE;
         if (wt == CLAMP) wt = CLAMP_TO_EDGE;
         if (wr == CLAMP) wr = CLAMP_TO_EDGE;
-//    #endif
+    #endif
 
     const Image * image = getImage(0);
     if( image &&
@@ -2228,12 +2228,11 @@ void Texture::applyTexParameters(GLenum target, State& state) const
     {
         if (_use_shadow_comparison)
         {
-            glTexParameteri(target, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-            glTexParameteri(target, GL_TEXTURE_COMPARE_FUNC, _shadow_compare_func);
-
-  //          #if defined(OSG_GL1_AVAILABLE) || defined(OSG_GL2_AVAILABLE)
-  //              glTexParameteri(target, GL_DEPTH_TEXTURE_MODE_ARB, _shadow_texture_mode);
-  //          #endif
+            glTexParameteri(target, GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_R_TO_TEXTURE_ARB);
+            glTexParameteri(target, GL_TEXTURE_COMPARE_FUNC_ARB, _shadow_compare_func);
+            #if defined(OSG_GL1_AVAILABLE) || defined(OSG_GL2_AVAILABLE)
+                glTexParameteri(target, GL_DEPTH_TEXTURE_MODE_ARB, _shadow_texture_mode);
+            #endif
 
             // if ambient value is 0 - it is default behaviour of GL_ARB_shadow
             // no need for GL_ARB_shadow_ambient in this case
@@ -2527,13 +2526,9 @@ void Texture::applyTexImage2D_load(State& state, GLenum target, const Image* ima
             GLint blockSize, size;
             getCompressedSize(_internalFormat, inwidth, inheight, 1, blockSize,size);
 
-            int size2 = size;
-            if (useHardwareMipMapGeneration)
-                size2 *= -1;
-
             extensions->glCompressedTexImage2D(target, 0, _internalFormat,
                 inwidth, inheight,0,
-                size2,
+                size,
                 dataPtr);
         }
 
@@ -2652,9 +2647,6 @@ void Texture::applyTexImage2D_load(State& state, GLenum target, const Image* ima
                             height = 1;
 
                         getCompressedSize(_internalFormat, width, height, 1, blockSize,size);
-
-                        if (k == numMipmapLevels - 1)
-                            size *= -1;
 
                         extensions->glCompressedTexImage2D(target, k, _internalFormat,
                                                            width, height, _borderWidth,
